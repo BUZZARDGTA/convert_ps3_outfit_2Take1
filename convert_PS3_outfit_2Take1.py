@@ -1,3 +1,7 @@
+import re
+
+RE_PUSH_PATTERN = re.compile(r'Push1?\s+(?P<int_value>-?\d+)')
+
 class IndexItem:
     def __init__(self, type_str: str, index_int: int, comment_str: str):
         self.type = type_str
@@ -52,12 +56,15 @@ def translate_outfit(input_data: str):
         if not line.startswith('Push '):
             continue
 
-        value = int(line.split('//')[0].split()[-1])
+        match = RE_PUSH_PATTERN.search(line)
+        if not match:
+            continue
+        int_value = int(match["int_value"])
 
         i += 1
         item = index_map[i]
 
-        categories[item.type].append(f'index{item.index}={value} ;; {item.comment}')
+        categories[item.type].append(f'index{item.index}={int_value} ;; {item.comment}')
 
     sorted_categories: dict[str, list[str]] = {
         '[COMPONENTS]': [],
@@ -74,46 +81,47 @@ def translate_outfit(input_data: str):
                         sorted_categories[category].append(item)
 
     # Output the result
-    output = ''
+    output_data = ''
     for category in sorted_categories:
-        output += f'{category}\n'
-        output += '\n'.join(sorted_categories[category]) + '\n'
+        output_data += f'{category}\n'
+        output_data += '\n'.join(sorted_categories[category]) + '\n'
+    output_data = output_data.removesuffix("\n")
 
-    return output
+    return output_data
 
 
 # Input data
 input_data = '''
-Push 20//hat
-Push 5//hat texture
-Push -1//glasses
-Push -1//glasses texture
-Push -1//ear pieces
-Push -1//ear pieces texture
-Push 0//face
-Push 0//face texture
-Push 54//head
-Push 5//head texture
-Push 13//hair
-Push 4//hair texture
-Push 17//torso
-Push 4//torso texture
-Push 9//legs
-Push 14//legs texture
-Push 42//hands
-Push 0//hands texture
-Push 1//shoes
-Push 8//shoes texture
-Push 0//special 1
-Push 0//special 1 texture
-Push 66//special 2
-Push 11//special 2 texture
-Push 1//special 3
-Push 4//special 3 texture
-Push 0//textures
-Push 0//textures texture
-Push 35//torso 2
-Push 1//torso 2 texture
+Push 38
+Push 2
+Push -1
+Push -1
+Push -1
+Push -1
+Push 0
+Push 0
+Push 36
+Push 0
+Push 10
+Push 6
+Push 18
+Push 1
+Push 30
+Push 2
+Push 38
+Push 1
+Push 1
+Push 2
+Push 23
+Push 1
+Push 35
+Push 0
+Push 2
+Push 0
+Push 0
+Push 0
+Push 46
+Push 1
 '''
 
 # Translate the input data
