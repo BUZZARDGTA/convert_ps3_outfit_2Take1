@@ -1,4 +1,5 @@
 import re
+from pathlib import Path
 
 
 class IndexItem:
@@ -41,10 +42,16 @@ INDEX_MAP = {
    6:  IndexItem('[PROPERTIES_TEXTURES]',  2,   'Ears -- ear pieces texture'),
    4:  IndexItem('[PROPERTIES_TEXTURES]',  1,   'Glasses -- glasses texture'),
 }
-RE_PUSH_PATTERN = re.compile(r'^\s*Push1?\s+(?P<int_value>-?\d{1,3})(?!\d)', re.MULTILINE)
+MODLOADER_PATH = Path('D:/Downloads/GTA Stuff/PS3/2) MODLOADERS/BUZZARD v6.1 Private/source by JR/ModLoader.csa')
+RE_OUTFIT_PATTERN = re.compile(
+    r'^:(?P<outfit_label>[\w&\.-]+)(?: ?//.*)?$\n(?P<outfit_data>(?:Push1? (?:-1|\d{1,3})(?: ?//.*)?$(?:\n)){30})Call @[\w&\.-]+$(?:\nPushString "(?P<outfit_name>[^"]+)")?',
+    re.MULTILINE
+)
+RE_OUTFIT_PUSH_VALUE_PATTERN = re.compile(r'^Push1? (?P<int_value>-1|\d{1,3})$')
+INVALID_WINDOWS_FILENAME_CHARS = set("\\/:*?\"<>|")
 
 
-def translate_outfit(input_data: str):
+def translate_outfit(outfit_int_values_list: list[int]):
     categories: dict[str, list[str]] = {
         '[COMPONENTS]': [],
         '[COMPONENTS_TEXTURES]': [],
@@ -52,8 +59,7 @@ def translate_outfit(input_data: str):
         '[PROPERTIES_TEXTURES]': [],
     }
 
-    for i, match in enumerate(RE_PUSH_PATTERN.finditer(input_data), start=1):
-        int_value = int(match.group("int_value"))
+    for i, int_value in enumerate(outfit_int_values_list, start=1):
         map_item = INDEX_MAP[i]
 
         categories[map_item.type].append(f'index{map_item.index}={int_value} ;; {map_item.comment}')
@@ -72,48 +78,41 @@ def translate_outfit(input_data: str):
                     if line.startswith(f'index{map_item2.index}='):
                         sorted_categories[category].append(line)
 
-    # Output the result
     return '\n'.join(
         f'{category}\n' +
         '\n'.join(sorted_categories[category])
         for category in sorted_categories
-    ).removesuffix("\n")
+    ).removesuffix('\n')
+
+def convert_invalid_chars(filename: str):
+    return ''.join(f"U+{ord(char):04X}" if char in INVALID_WINDOWS_FILENAME_CHARS else char for char in filename)
 
 
-# Input data
-input_data = '''
-Push 39//hat
-Push 0//hat texture
-Push -1//glasses
-Push -1//glasses texture
-Push -1//ear pieces
-Push -1//ear pieces texture
-Push 0//face
-Push 0//face texture
-Push 54//head
-Push 7//head texture
-Push 13//hair
-Push 4//hair texture
-Push 81//torso
-Push 0//torso texture
-Push 28//legs
-Push 1//legs texture
-Push 10//hands
-Push 7//hands texture
-Push 8//shoes
-Push 2//shoes texture
-Push 41//special 1
-Push 0//special 1 texture
-Push 58//special 2
-Push 0//special 2 texture
-Push 0//special 3
-Push 0//special 3 texture
-Push 8//textures
-Push 0//textures texture
-Push 0//torso 2
-Push 0//torso 2 texture
-'''
+for i, match in enumerate(RE_OUTFIT_PATTERN.finditer(MODLOADER_PATH.read_text(encoding='utf-8')), start=1):
+    outfit_label = match['outfit_label']
+    outfit_data = match['outfit_data']
+    outfit_name = match['outfit_name']
 
-# Translate the input data
-output_data = translate_outfit(input_data)
-print(output_data)
+    outfit_int_values_list = []
+    for data in outfit_data.splitlines(keepends=False):
+        match = RE_OUTFIT_PUSH_VALUE_PATTERN.search(data)
+        outfit_int_values_list.append(int(match['int_value']))
+
+    translated_output_data = translate_outfit(outfit_int_values_list)
+
+    outfit_filename = Path(f"PS3_outfit_{i}.ini")
+
+    base_name_to_sanitize = None
+    if outfit_name:
+        base_name_to_sanitize = outfit_name
+    elif outfit_label:
+        base_name_to_sanitize = outfit_label
+
+    if base_name_to_sanitize:
+        sanitized_base_name = convert_invalid_chars(base_name_to_sanitize)
+        outfit_filename = outfit_filename.with_name(f"{outfit_filename.stem}_{sanitized_base_name}").with_suffix(outfit_filename.suffix)
+
+    outfit_filename.write_text(translated_output_data, encoding='utf-8')
+
+    print(f"Created outfit: {outfit_filename}")
+exit(0)
