@@ -9,7 +9,7 @@ class IndexItem:
         self.comment = comment_str
 
 # Map each component and property to their corresponding index in 2Take1 outfit .ini file.
-index_map = {
+INDEX_MAP = {
    7:  IndexItem('[COMPONENTS]',           0,   'Head -- face'),
    17: IndexItem('[COMPONENTS]',           5,   'Parachute -- hands'),
    9:  IndexItem('[COMPONENTS]',           1,   'Mask -- head'),
@@ -62,7 +62,7 @@ def translate_outfit(input_data: str):
         int_value = int(match["int_value"])
 
         i += 1
-        item = index_map[i]
+        item = INDEX_MAP[i]
 
         categories[item.type].append(f'index{item.index}={int_value} ;; {item.comment}')
 
@@ -73,7 +73,7 @@ def translate_outfit(input_data: str):
         '[PROPERTIES_TEXTURES]': [],
     }
 
-    for map_item in index_map.values():
+    for map_item in INDEX_MAP.values():
         for category in sorted_categories:
             if map_item.type == category:
                 for item in categories[category]:
