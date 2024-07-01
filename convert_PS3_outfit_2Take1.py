@@ -11,26 +11,26 @@ class IndexItem:
 # Map each component and property to their corresponding index in 2Take1 outfit .ini file.
 index_map = {
    7:  IndexItem('[COMPONENTS]',           0,   'Head -- face'),
-   23: IndexItem('[COMPONENTS]',           5,   'Parachute -- special 2'),
+   17: IndexItem('[COMPONENTS]',           5,   'Parachute -- hands'),
    9:  IndexItem('[COMPONENTS]',           1,   'Mask -- head'),
    15: IndexItem('[COMPONENTS]',           4,   'Legs -- legs'),
    11: IndexItem('[COMPONENTS]',           2,   'Hair -- hair'),
    21: IndexItem('[COMPONENTS]',           7,   'Accessory -- special 1'),
-   17: IndexItem('[COMPONENTS]',           3,   'Gloves -- hands'),
+   13: IndexItem('[COMPONENTS]',           3,   'Gloves -- torso'),
    29: IndexItem('[COMPONENTS]',           11,  'Torso -- torso 2'),
    19: IndexItem('[COMPONENTS]',           6,   'Feet -- shoes'),
-   13: IndexItem('[COMPONENTS]',           8,   'Torso 2 -- torso'),
+   23: IndexItem('[COMPONENTS]',           8,   'Torso 2 -- special 2 texture'),
    25: IndexItem('[COMPONENTS]',           9,   'Vest -- special 3'),
    27: IndexItem('[COMPONENTS]',           10,  'Decal -- textures'),
    8:  IndexItem('[COMPONENTS_TEXTURES]',  0,   'Head -- face texture'),
-   24: IndexItem('[COMPONENTS_TEXTURES]',  5,   'Parachute -- special 2 texture'),
+   18: IndexItem('[COMPONENTS_TEXTURES]',  5,   'Parachute -- hands texture'),
    10: IndexItem('[COMPONENTS_TEXTURES]',  1,   'Mask -- head texture'),
    22: IndexItem('[COMPONENTS_TEXTURES]',  7,   'Accessory -- special 1 texture'),
    16: IndexItem('[COMPONENTS_TEXTURES]',  4,   'Legs -- legs texture'),
    12: IndexItem('[COMPONENTS_TEXTURES]',  2,   'Hair -- hair texture'),
-   18: IndexItem('[COMPONENTS_TEXTURES]',  3,   'Gloves -- hands texture'),
+   14: IndexItem('[COMPONENTS_TEXTURES]',  3,   'Gloves -- torso texture'),
    20: IndexItem('[COMPONENTS_TEXTURES]',  6,   'Feet -- shoes texture'),
-   14: IndexItem('[COMPONENTS_TEXTURES]',  8,   'Torso 2 -- torso texture'),
+   24: IndexItem('[COMPONENTS_TEXTURES]',  8,   'Torso 2 -- special 2 texture'),
    26: IndexItem('[COMPONENTS_TEXTURES]',  9,   'Vest -- special 3 texture'),
    28: IndexItem('[COMPONENTS_TEXTURES]',  10,  'Decal -- textures texture'),
    30: IndexItem('[COMPONENTS_TEXTURES]',  11,  'Torso -- torso 2 texture'),
@@ -92,8 +92,8 @@ def translate_outfit(input_data: str):
 
 # Input data
 input_data = '''
-Push 20//hat
-Push 5//hat texture
+Push 39//hat
+Push 0//hat texture
 Push -1//glasses
 Push -1//glasses texture
 Push -1//ear pieces
@@ -101,27 +101,27 @@ Push -1//ear pieces texture
 Push 0//face
 Push 0//face texture
 Push 54//head
-Push 5//head texture
+Push 7//head texture
 Push 13//hair
 Push 4//hair texture
-Push 17//torso
-Push 4//torso texture
-Push 9//legs
-Push 14//legs texture
-Push 42//hands
-Push 0//hands texture
-Push 1//shoes
-Push 8//shoes texture
-Push 0//special 1
+Push 81//torso
+Push 0//torso texture
+Push 28//legs
+Push 1//legs texture
+Push 10//hands
+Push 7//hands texture
+Push 8//shoes
+Push 2//shoes texture
+Push 41//special 1
 Push 0//special 1 texture
-Push 66//special 2
-Push 11//special 2 texture
-Push 1//special 3
-Push 4//special 3 texture
-Push 0//textures
+Push 58//special 2
+Push 0//special 2 texture
+Push 0//special 3
+Push 0//special 3 texture
+Push 8//textures
 Push 0//textures texture
-Push 35//torso 2
-Push 1//torso 2 texture
+Push 0//torso 2
+Push 0//torso 2 texture
 '''
 
 # Translate the input data
