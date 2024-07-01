@@ -1,12 +1,12 @@
 import re
 
-RE_PUSH_PATTERN = re.compile(r'Push1?\s+(?P<int_value>-?\d+)')
 
 class IndexItem:
     def __init__(self, type_str: str, index_int: int, comment_str: str):
         self.type = type_str
         self.index = index_int
         self.comment = comment_str
+
 
 # Map each component and property to their corresponding index in 2Take1 outfit .ini file.
 INDEX_MAP = {
@@ -41,6 +41,7 @@ INDEX_MAP = {
    6:  IndexItem('[PROPERTIES_TEXTURES]',  2,   'Ears -- ear pieces texture'),
    4:  IndexItem('[PROPERTIES_TEXTURES]',  1,   'Glasses -- glasses texture'),
 }
+RE_PUSH_PATTERN = re.compile(r'^\s*Push1?\s+(?P<int_value>-?\d{1,3})(?!\d)', re.MULTILINE)
 
 
 def translate_outfit(input_data: str):
@@ -51,20 +52,11 @@ def translate_outfit(input_data: str):
         '[PROPERTIES_TEXTURES]': [],
     }
 
-    i = 0
-    for line in input_data.splitlines():
-        if not line.startswith('Push '):
-            continue
+    for i, match in enumerate(RE_PUSH_PATTERN.finditer(input_data), start=1):
+        int_value = int(match.group("int_value"))
+        map_item = INDEX_MAP[i]
 
-        match = RE_PUSH_PATTERN.search(line)
-        if not match:
-            continue
-        int_value = int(match["int_value"])
-
-        i += 1
-        item = INDEX_MAP[i]
-
-        categories[item.type].append(f'index{item.index}={int_value} ;; {item.comment}')
+        categories[map_item.type].append(f'index{map_item.index}={int_value} ;; {map_item.comment}')
 
     sorted_categories: dict[str, list[str]] = {
         '[COMPONENTS]': [],
@@ -73,21 +65,19 @@ def translate_outfit(input_data: str):
         '[PROPERTIES_TEXTURES]': [],
     }
 
-    for map_item in INDEX_MAP.values():
+    for map_item2 in INDEX_MAP.values():
         for category in sorted_categories:
-            if map_item.type == category:
-                for item in categories[category]:
-                    if item.startswith(f'index{map_item.index}='):
-                        sorted_categories[category].append(item)
+            if map_item2.type == category:
+                for line in categories[category]:
+                    if line.startswith(f'index{map_item2.index}='):
+                        sorted_categories[category].append(line)
 
     # Output the result
-    output_data = ''
-    for category in sorted_categories:
-        output_data += f'{category}\n'
-        output_data += '\n'.join(sorted_categories[category]) + '\n'
-    output_data = output_data.removesuffix("\n")
-
-    return output_data
+    return '\n'.join(
+        f'{category}\n' +
+        '\n'.join(sorted_categories[category])
+        for category in sorted_categories
+    ).removesuffix("\n")
 
 
 # Input data
