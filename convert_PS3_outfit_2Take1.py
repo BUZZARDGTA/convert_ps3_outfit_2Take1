@@ -3,44 +3,46 @@ from pathlib import Path
 
 
 class IndexItem:
-    def __init__(self, type_str: str, index_int: int, comment_str: str):
-        self.type = type_str
-        self.index = index_int
-        self.comment = comment_str
+    def __init__(self, type: str, component_id: int, official_game_file__help_name: str, two_take_one__feature__help_name: str, notyourdope_rage_asm__code_comment__help_name: str):
+        self.type = type
+        self.component_id = component_id
+        self.official_game_file__help_name = official_game_file__help_name
+        self.two_take_one__feature__help_name = two_take_one__feature__help_name
+        self.notyourdope_rage_asm__code_comment__help_name = notyourdope_rage_asm__code_comment__help_name
 
 
-# Map each component and property to their corresponding index in 2Take1 outfit .ini file.
+# Map each component and property to their corresponding line index in 2Take1 outfit .ini files.
 INDEX_MAP = {
-   7:  IndexItem('[COMPONENTS]',           0,   'Head -- face'),
-   17: IndexItem('[COMPONENTS]',           5,   'Parachute -- hands'),
-   9:  IndexItem('[COMPONENTS]',           1,   'Mask -- head'),
-   15: IndexItem('[COMPONENTS]',           4,   'Legs -- legs'),
-   11: IndexItem('[COMPONENTS]',           2,   'Hair -- hair'),
-   21: IndexItem('[COMPONENTS]',           7,   'Accessory -- special 1'),
-   13: IndexItem('[COMPONENTS]',           3,   'Gloves -- torso'),
-   29: IndexItem('[COMPONENTS]',           11,  'Torso -- torso 2'),
-   19: IndexItem('[COMPONENTS]',           6,   'Feet -- shoes'),
-   23: IndexItem('[COMPONENTS]',           8,   'Torso 2 -- special 2 texture'),
-   25: IndexItem('[COMPONENTS]',           9,   'Vest -- special 3'),
-   27: IndexItem('[COMPONENTS]',           10,  'Decal -- textures'),
-   8:  IndexItem('[COMPONENTS_TEXTURES]',  0,   'Head -- face texture'),
-   18: IndexItem('[COMPONENTS_TEXTURES]',  5,   'Parachute -- hands texture'),
-   10: IndexItem('[COMPONENTS_TEXTURES]',  1,   'Mask -- head texture'),
-   22: IndexItem('[COMPONENTS_TEXTURES]',  7,   'Accessory -- special 1 texture'),
-   16: IndexItem('[COMPONENTS_TEXTURES]',  4,   'Legs -- legs texture'),
-   12: IndexItem('[COMPONENTS_TEXTURES]',  2,   'Hair -- hair texture'),
-   14: IndexItem('[COMPONENTS_TEXTURES]',  3,   'Gloves -- torso texture'),
-   20: IndexItem('[COMPONENTS_TEXTURES]',  6,   'Feet -- shoes texture'),
-   24: IndexItem('[COMPONENTS_TEXTURES]',  8,   'Torso 2 -- special 2 texture'),
-   26: IndexItem('[COMPONENTS_TEXTURES]',  9,   'Vest -- special 3 texture'),
-   28: IndexItem('[COMPONENTS_TEXTURES]',  10,  'Decal -- textures texture'),
-   30: IndexItem('[COMPONENTS_TEXTURES]',  11,  'Torso -- torso 2 texture'),
-   1:  IndexItem('[PROPERTIES]',           0,   'Hat -- hat'),
-   3:  IndexItem('[PROPERTIES]',           1,   'Glasses -- glasses'),
-   5:  IndexItem('[PROPERTIES]',           2,   'Ears -- ear pieces'),
-   2:  IndexItem('[PROPERTIES_TEXTURES]',  0,   'Hat -- hat texture'),
-   6:  IndexItem('[PROPERTIES_TEXTURES]',  2,   'Ears -- ear pieces texture'),
-   4:  IndexItem('[PROPERTIES_TEXTURES]',  1,   'Glasses -- glasses texture'),
+   7:   IndexItem('[COMPONENTS]',           0,   'head',  'Head',       'face'),
+   17:  IndexItem('[COMPONENTS]',           5,   'hand',  'Parachute',  'hands'),
+   9:   IndexItem('[COMPONENTS]',           1,   'berd',  'Mask',       'head'),
+   15:  IndexItem('[COMPONENTS]',           4,   'lowr',  'Legs',       'legs'),
+   11:  IndexItem('[COMPONENTS]',           2,   'hair',  'Hair',       'hair'),
+   21:  IndexItem('[COMPONENTS]',           7,   'teef',  'Accessory',  'special 1'),
+   13:  IndexItem('[COMPONENTS]',           3,   'uppr',  'Gloves',     'torso'),
+   29:  IndexItem('[COMPONENTS]',           11,  'jbib',  'Torso',      'torso 2'),
+   19:  IndexItem('[COMPONENTS]',           6,   'feet',  'Feet',       'shoes'),
+   23:  IndexItem('[COMPONENTS]',           8,   'accs',  'Torso 2',    'special 2'),
+   25:  IndexItem('[COMPONENTS]',           9,   'task',  'Vest',       'special 3'),
+   27:  IndexItem('[COMPONENTS]',           10,  'decl',  'Decal',      'textures'),
+   8:   IndexItem('[COMPONENTS_TEXTURES]',  0,   'head',  'Head',       'face texture'),
+   18:  IndexItem('[COMPONENTS_TEXTURES]',  5,   'hand',  'Parachute',  'hands texture'),
+   10:  IndexItem('[COMPONENTS_TEXTURES]',  1,   'berd',  'Mask',       'head texture'),
+   22:  IndexItem('[COMPONENTS_TEXTURES]',  7,   'teef',  'Accessory',  'special 1 texture'),
+   16:  IndexItem('[COMPONENTS_TEXTURES]',  4,   'lowr',  'Legs',       'legs texture'),
+   12:  IndexItem('[COMPONENTS_TEXTURES]',  2,   'hair',  'Hair',       'hair texture'),
+   14:  IndexItem('[COMPONENTS_TEXTURES]',  3,   'uppr',  'Gloves',     'torso texture'),
+   20:  IndexItem('[COMPONENTS_TEXTURES]',  6,   'feet',  'Feet',       'shoes texture'),
+   24:  IndexItem('[COMPONENTS_TEXTURES]',  8,   'accs',  'Torso 2',    'special 2 texture'),
+   26:  IndexItem('[COMPONENTS_TEXTURES]',  9,   'task',  'Vest',       'special 3 texture'),
+   28:  IndexItem('[COMPONENTS_TEXTURES]',  10,  'decl',  'Decal',      'textures texture'),
+   30:  IndexItem('[COMPONENTS_TEXTURES]',  11,  'jbib',  'Torso',      'torso 2 texture'),
+   1:   IndexItem('[PROPERTIES]',           0,   'head',  'Hat',        'hat'),
+   3:   IndexItem('[PROPERTIES]',           1,   'eyes',  'Glasses',    'glasses'),
+   5:   IndexItem('[PROPERTIES]',           2,   'ears',  'Ears',       'ear pieces'),
+   2:   IndexItem('[PROPERTIES_TEXTURES]',  0,   'head',  'Hat',        'hat texture'),
+   6:   IndexItem('[PROPERTIES_TEXTURES]',  2,   'ears',  'Ears',       'ear pieces texture'),
+   4:   IndexItem('[PROPERTIES_TEXTURES]',  1,   'eyes',  'Glasses',    'glasses texture'),
 }
 MODLOADER_PATH = Path('D:/Downloads/GTA Stuff/PS3/2) MODLOADERS/BUZZARD v6.1 Private/source by JR/ModLoader.csa')
 RE_OUTFIT_PATTERN = re.compile(
@@ -62,7 +64,7 @@ def translate_outfit(outfit_int_values_list: list[int]):
     for i, int_value in enumerate(outfit_int_values_list, start=1):
         map_item = INDEX_MAP[i]
 
-        categories[map_item.type].append(f'index{map_item.index}={int_value} ;; {map_item.comment}')
+        categories[map_item.type].append(f'index{map_item.component_id}={int_value} ;; {map_item.two_take_one__feature__help_name}')
 
     sorted_categories: dict[str, list[str]] = {
         '[COMPONENTS]': [],
@@ -75,7 +77,7 @@ def translate_outfit(outfit_int_values_list: list[int]):
         for category in sorted_categories:
             if map_item2.type == category:
                 for line in categories[category]:
-                    if line.startswith(f'index{map_item2.index}='):
+                    if line.startswith(f'index{map_item2.component_id}='):
                         sorted_categories[category].append(line)
 
     return '\n'.join(
