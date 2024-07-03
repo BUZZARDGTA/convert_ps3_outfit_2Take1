@@ -44,7 +44,13 @@ INDEX_MAP = {
    6:   IndexItem('[PROPERTIES_TEXTURES]',  2,   'ears',  'Ears',       'ear pieces texture'),
    4:   IndexItem('[PROPERTIES_TEXTURES]',  1,   'eyes',  'Glasses',    'glasses texture'),
 }
-MODLOADER_PATH = Path('D:/Downloads/GTA Stuff/PS3/2) MODLOADERS/BUZZARD v6.1 Private/source by JR/ModLoader.csa')
+# User settings START
+#MODLOADER_PATH = Path('D:/Downloads/GTA Stuff/PS3/2) MODLOADERS/BUZZARD v6.1 Private/source by JR/ModLoader.csa')
+MODLOADER_PATH = Path('D:/Downloads/GTA Stuff/PS3/2) MODLOADERS/BUZZARD v6.1 Private/source by JR/BUZZARD_6_1_male_outfits.csa')
+#MODLOADER_PATH = Path('D:/Downloads/GTA Stuff/PS3/2) MODLOADERS/BUZZARD v6.1 Private/source by JR/BUZZARD_6_1_female_outfits.csa')
+FILENAME_MALE_OR_FEMALE = "male" # male / female / mixed
+FILENAME_SANITIZER = True
+# User settings END
 RE_OUTFIT_PATTERN = re.compile(
     r'^:(?P<outfit_label>[\w&\.-]+)(?: ?//.*)?$\n(?P<outfit_data>(?:Push1? (?:-1|\d{1,3})(?: ?//.*)?$(?:\n)){30})Call @[\w&\.-]+$(?:\nPushString "(?P<outfit_name>[^"]+)")?',
     re.MULTILINE
@@ -53,7 +59,10 @@ RE_OUTFIT_PUSH_VALUE_PATTERN = re.compile(r'^Push1? (?P<int_value>-1|\d{1,3})$')
 INVALID_WINDOWS_FILENAME_CHARS = set("\\/:*?\"<>|")
 
 
-def translate_outfit(outfit_int_values_list: list[int]):
+def convert_invalid_windows_filename_chars_to_unicode(filename: str):
+    return ''.join(f"U+{ord(char):04X}" if char in INVALID_WINDOWS_FILENAME_CHARS else char for char in filename)
+
+def outfit_converter(outfit_int_values_list: list[int]):
     categories: dict[str, list[str]] = {
         '[COMPONENTS]': [],
         '[COMPONENTS_TEXTURES]': [],
@@ -86,11 +95,11 @@ def translate_outfit(outfit_int_values_list: list[int]):
         for category in sorted_categories
     ).removesuffix('\n')
 
-def convert_invalid_chars(filename: str):
-    return ''.join(f"U+{ord(char):04X}" if char in INVALID_WINDOWS_FILENAME_CHARS else char for char in filename)
 
+matches = list(RE_OUTFIT_PATTERN.finditer(MODLOADER_PATH.read_text(encoding='utf-8')))
+max_index_length = len(str(len(matches)))
 
-for i, match in enumerate(RE_OUTFIT_PATTERN.finditer(MODLOADER_PATH.read_text(encoding='utf-8')), start=1):
+for i, match in enumerate(matches, start=1):
     outfit_label = match['outfit_label']
     outfit_data = match['outfit_data']
     outfit_name = match['outfit_name']
@@ -100,21 +109,24 @@ for i, match in enumerate(RE_OUTFIT_PATTERN.finditer(MODLOADER_PATH.read_text(en
         match = RE_OUTFIT_PUSH_VALUE_PATTERN.search(data)
         outfit_int_values_list.append(int(match['int_value']))
 
-    translated_output_data = translate_outfit(outfit_int_values_list)
+    translated_output_data = outfit_converter(outfit_int_values_list)
 
-    outfit_filename = Path(f"PS3_outfit_{i}.ini")
+    padded_index = str(i).zfill(max_index_length) # Zero-pad the outfit index
+
+    outfit_filename = Path(f'PS3_outfit_{FILENAME_MALE_OR_FEMALE}_{padded_index}.ini')
 
     base_name_to_sanitize = None
     if outfit_name:
         base_name_to_sanitize = outfit_name
+        if FILENAME_SANITIZER:
+            base_name_to_sanitize = base_name_to_sanitize.replace("~b~", "").replace("~n~", "").replace("~p~", "").replace("~r~", "").replace(":", "")
     elif outfit_label:
         base_name_to_sanitize = outfit_label
 
     if base_name_to_sanitize:
-        sanitized_base_name = convert_invalid_chars(base_name_to_sanitize)
-        outfit_filename = outfit_filename.with_name(f"{outfit_filename.stem}_{sanitized_base_name}").with_suffix(outfit_filename.suffix)
+        sanitized_base_name = convert_invalid_windows_filename_chars_to_unicode(base_name_to_sanitize)
+        outfit_filename = outfit_filename.with_name(f'{outfit_filename.stem}_{sanitized_base_name}').with_suffix(outfit_filename.suffix)
 
     outfit_filename.write_text(translated_output_data, encoding='utf-8')
 
-    print(f"Created outfit: {outfit_filename}")
-exit(0)
+    print(f'Created outfit: "{outfit_filename}"')
