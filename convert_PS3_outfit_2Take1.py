@@ -52,12 +52,12 @@ MODLOADER_PATH = Path('D:/Downloads/GTA Stuff/PS3/2) MODLOADERS/BUZZARD v6.1 Pri
 FILENAME_MALE_OR_FEMALE = 'male' # male / female / mixed
 FILENAME_SANITIZER = True
 # User settings END
-RE_FILENAME_SANITIZER_PATTERN = re.compile('|'.join(map(re.escape, ['~b~', '~n~', '~p~', '~r~', ':'])))
 RE_OUTFIT_PATTERN = re.compile(
     r'^:(?P<outfit_label>[\w&\.-]+)(?: ?//.*)?$\n(?P<outfit_data>(?:Push1? (?:-1|\d{1,3})(?: ?//.*)?$(?:\n)){30})Call @[\w&\.-]+$(?:\nPushString "(?P<outfit_name>[^"]+)")?',
     re.MULTILINE
 )
 RE_OUTFIT_PUSH_VALUE_PATTERN = re.compile(r'^Push1? (?P<int_value>-1|\d{1,3})$')
+RE_FILENAME_SANITIZER_PATTERN = re.compile(r'~b~|~n~|~p~|~r~|:')
 INVALID_WINDOWS_FILENAME_CHARS = set('\\/:*?"<>|')
 
 
