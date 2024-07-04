@@ -85,20 +85,19 @@ def outfit_converter():
 
 def generate_outfit_filename():
     outfit_path = Path(f'PS3_{FILENAME_MALE_OR_FEMALE}_{str(i).zfill(max_generated_outfits__index_length)}.ini')
-
-    sanitized_outfit_name = None
+    extra_outfit_name = None
 
     if outfit_name:
         if FILENAME_SANITIZER:
-            sanitized_outfit_name = RE_FILENAME_SANITIZER_PATTERN.sub('', outfit_name)
+            extra_outfit_name = RE_FILENAME_SANITIZER_PATTERN.sub('', outfit_name)
         else:
-            sanitized_outfit_name = outfit_name
+            extra_outfit_name = outfit_name
     elif outfit_label:
-        sanitized_outfit_name = outfit_label
+        extra_outfit_name = outfit_label
 
-    if sanitized_outfit_name:
-        sanitized_outfit_name = convert_invalid_windows_filename_chars_to_unicode(sanitized_outfit_name)
-        outfit_path = outfit_path.with_name(f'{outfit_path.stem}_{sanitized_outfit_name}').with_suffix(outfit_path.suffix)
+    if extra_outfit_name:
+        extra_outfit_name = convert_invalid_windows_filename_chars_to_unicode(extra_outfit_name)
+        outfit_path = outfit_path.with_stem(f'{outfit_path.stem}_{extra_outfit_name}')
 
     return outfit_path
 
